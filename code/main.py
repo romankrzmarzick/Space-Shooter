@@ -37,9 +37,10 @@ class PLayer(pygame.sprite.Sprite):
         recent_keys = pygame.key.get_just_pressed()
         # laser shot
         if recent_keys[pygame.K_SPACE] and self.can_shoot:
-            Laser(laser_surf, self.rect.midtop, (all_sprites, laser_sprites))
+            Laser(laser_surf, self.rect.midtop, (all_sprites, laser_sprites))  
             self.can_shoot = False
             self.laser_shoot_time = pygame.time.get_ticks()
+            laser_sound.play()
 
     def movement(self, dt):
         self.rect.center += self.player_direction * self.player_speed * dt
@@ -148,19 +149,19 @@ def collisions():
     collision_sprites = pygame.sprite.spritecollide(player, asteroid_sprites, True, pygame.sprite.collide_mask)
     if collision_sprites:
         print("died")
+
+        damage_sound.play()
     for laser in laser_sprites:
         if pygame.sprite.spritecollide(laser, asteroid_sprites, True):
             laser.kill()
             AnimatedExposion(explosion_frames, laser.rect.midtop, all_sprites)
-
+            explosion_sound.play()
 
 pygame.init()
 screen = pygame.display.set_mode((INTERAL_W * SCALE, INTERAL_H * SCALE))
 surface = pygame.Surface((INTERAL_W, INTERAL_H))
 pygame.display.set_caption("Space Shooter")
 clock = pygame.time.Clock()
-
-
 
 
 # --- Imports ---
@@ -170,6 +171,15 @@ laser_surf = pygame.image.load(join("images", "laser.png")).convert_alpha()
 asteroid_surface = pygame.image.load(join("images", "asteroid.png")).convert_alpha()
 font = pygame.font.Font(join("images", "Oxanium-Bold.ttf"), 32)
 explosion_frames = [pygame.image.load(join("images", "explosion", f"{i}.png" )).convert_alpha() for i in range (21)]
+
+laser_sound = pygame.mixer.Sound(join("audio", "laser_sound.wav"))
+laser_sound.set_volume(.1)
+damage_sound = pygame.mixer.Sound(join("audio", "damage_sound.ogg"))
+damage_sound.set_volume(.5)
+main_music = pygame.mixer.Sound(join("audio", "main_music.wav"))
+main_music.set_volume(.1)
+explosion_sound = pygame.mixer.Sound(join("audio", "explosion_sound.wav"))
+explosion_sound.set_volume(.2)
 
 # --- Sprites ---
 all_sprites = pygame.sprite.Group()
@@ -184,6 +194,7 @@ meteor_event = pygame.event.custom_type()
 pygame.time.set_timer(meteor_event, 500)
 
 
+main_music.play(-1)
 
 while True:
     dt = clock.tick_busy_loop(100) / 1000
@@ -196,7 +207,7 @@ while True:
             exit()
         if event.type == meteor_event:
             x, y = randint(0, INTERAL_W), randint(-200, -100)
-            Asteroid((all_sprites, asteroid_sprites), (x, y)  ,asteroid_surface)
+            Asteroid((all_sprites, asteroid_sprites), (x, y), asteroid_surface)
 
 
     # --- Update ---

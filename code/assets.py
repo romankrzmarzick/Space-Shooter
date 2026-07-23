@@ -12,6 +12,8 @@ class Assets:
     asteroid : pygame.Surface
     explosion : list[pygame.Surface]
     font : pygame.font.Font
+    menu_font : pygame.font.Font
+    title_font : pygame.font.Font
     explosion_sound : pygame.mixer.Sound
     damage_sound : pygame.mixer.Sound
     laser_sound : pygame.mixer.Sound
@@ -34,6 +36,8 @@ def load():
         asteroid=pygame.image.load(join("images", "asteroid.png")).convert_alpha(),
         explosion=[pygame.image.load(join("images", "explosion", f"{i}.png" )).convert_alpha() for i in range (21)],
         font=pygame.font.Font(join("images", "Oxanium-Bold.ttf"), 32),
+        menu_font=pygame.font.Font(join("images", "Oxanium-Bold.ttf"), 34),
+        title_font=pygame.font.Font(join("images", "Oxanium-Bold.ttf"), 82),
         explosion_sound=explosion_sound, 
         damage_sound=damage_sound,
         laser_sound=laser_sound,
